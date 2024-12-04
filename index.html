@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Outside Game V</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #levelText {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #passwordInput {
+            font-size: 18px;
+            padding: 5px;
+            width: 250px;
+            text-align: center;
+        }
+        #checkButton {
+            font-size: 18px;
+            padding: 5px 10px;
+            margin-top: 10px;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+        .summary {
+            color: blue;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Game Outside Game V</h1>
+    <div id="levelText"></div>
+    <input type="text" id="passwordInput" placeholder="Enter password here">
+    <button id="checkButton">Check</button>
+    <div id="result"></div>
+    
+    <script>
+        const levels = [
+            { 
+                description: "eo6xqle", 
+                validPasswords: ["Classroom", "classroom"]
+            },
+            { 
+                description: "What is this?", 
+                validPasswords: [
+                    "ความยาวเส้นรอบวงหารด้วยเส้นผ่านศูนย์กลางของวงกลม", 
+                    "อัตราส่วนระหว่างเส้นรอบวงกับเส้นผ่านศูนย์กลางของวงกลม", 
+                    "the ratio of a circle's circumference to its diameter", 
+                    "the ratio of a circle is circumference to its diameter", 
+                    "The ratio of a circle's circumference to its diameter", 
+                    "The ratio of a circle is circumference to its diameter"
+                ]
+            },
+            { 
+                description: "The difference of 137.373.733.737.177.133.131.171.731", 
+                validPasswords: [
+                    "AlaTheroArgi", 
+                    "AlaArgiThero", 
+                    "ArgiAlaThero", 
+                    "ArgiTheroAla", 
+                    "TheroAlaArgi", 
+                    "TheroArgiAla"
+                ]
+            }
+        ];
+
+        const attempts = Array(levels.length).fill(0);
+        let currentLevel = 0;
+
+        function updateLevelText() {
+            document.getElementById("levelText").innerHTML = `LEVEL ${currentLevel + 1}: ${levels[currentLevel].description}`;
+            document.getElementById("passwordInput").style.display = "block";
+        }
+
+        updateLevelText();
+
+        function showSummary() {
+            let totalAttempts = attempts.reduce((sum, attempts) => sum + attempts, 0);
+            let summary = "จำนวนครั้งที่ตอบผิดในแต่ละ LEVEL:<br>";
+            for (let i = 0; i < attempts.length; i++) {
+                summary += `LEVEL ${i + 1}: ${attempts[i]} ครั้ง<br>`;
+            }
+            summary += `<br>รวมทั้งหมด: ${totalAttempts} ครั้ง`;
+            document.getElementById("result").innerHTML = summary;
+            document.getElementById("result").className = 'summary';
+
+            document.getElementById("passwordInput").style.display = "none";
+            document.getElementById("checkButton").style.display = "none";
+            document.getElementById("levelText").style.display = "none";
+        }
+
+        document.getElementById("checkButton").addEventListener("click", function() {
+            document.getElementById("result").textContent = '';
+            let userInput = document.getElementById("passwordInput").value;
+
+            // Handle correct input
+            if (levels[currentLevel].validPasswords.includes(userInput)) {
+                document.getElementById("result").textContent = `ผ่าน LEVEL ${currentLevel + 1} แล้ว! คุณตอบผิดไปทั้งหมด ${attempts[currentLevel]} ครั้ง`;
+                document.getElementById("result").className = 'correct';
+                currentLevel++;
+
+                if (currentLevel < levels.length) {
+                    updateLevelText();
+                } else {
+                    showSummary();
+                }
+            } else {
+                // Incorrect input
+                attempts[currentLevel]++;
+                document.getElementById("result").textContent = `รหัสผ่านผิด! คุณตอบผิดไปแล้ว ${attempts[currentLevel]} ครั้ง`;
+                document.getElementById("result").className = 'incorrect';
+            }
+
+            document.getElementById("passwordInput").value = '';
+        });
+    </script>
+</body>
+</html>
